@@ -1,3 +1,5 @@
+--This file is only for those who dont have an SQL viewer extention it can be ran to see the database info
+
 -- View all users
 .print 'Users'
 SELECT * FROM USER;
