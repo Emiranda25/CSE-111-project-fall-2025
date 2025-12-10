@@ -9,12 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD:website_interface/example/backend/package.json
     "axios": "^1.6.2",
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.5.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+=======
+    "axios": "^1.13.2",
+>>>>>>> d37d8c6 (fix):website_interface/example/package.json
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
