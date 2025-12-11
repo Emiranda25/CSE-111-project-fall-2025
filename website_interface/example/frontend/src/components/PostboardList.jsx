@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { postboardAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import CreatePostboardModal from './CreatePostboardModal';
+import CreatePostboardModal from './CreatePostModal';
 
 export default function PostboardList({ onSelectPostboard, onCreatePost }) {
   const [postboards, setPostboards] = useState([]);
