@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Boards</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3651d4;
+            --secondary: #7c3aed;
+            --bg: #f0f4ff;
+            --card-bg: #ffffff;
+            --text: #1a1a2e;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --tag-bg: #ede9fe;
+            --tag-text: #7c3aed;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            color: var(--text-muted);
+        }
+
+        .user-info strong {
+            color: var(--text);
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #6d28d9;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        /* Boards Grid */
+        .boards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .board-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .board-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.15);
+            border-color: var(--primary);
+        }
+
+        .board-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .board-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .board-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .board-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Board View */
+        .board-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        .board-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .board-desc {
+            color: var(--text-muted);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin: 1.5rem 0;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 4px;
+            width: fit-content;
+        }
+
+        .tab {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab:not(.active):hover {
+            background: var(--bg);
+        }
+
+        /* Posts */
+        .posts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .post-author {
+            font-weight: 600;
+        }
+
+        .post-time {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .post-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .reactions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .reaction-btn {
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.2s ease;
+        }
+
+        .reaction-btn:hover {
+            background: var(--bg);
+            border-color: var(--primary);
+        }
+
+        .reaction-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .reaction-btn span {
+            font-size: 0.8rem;
+        }
+
+        .comment-count {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .comment-count:hover {
+            color: var(--primary);
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .comment {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .comment-body {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .comment-text {
+            color: var(--text);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .comment-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .comment-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Events */
+        .event-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .event-tag {
+            display: inline-block;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .event-time-tag {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-left: 0.75rem;
+        }
+
+        .event-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-desc {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .event-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .event-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .event-detail svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .event-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .event-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-attend {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-attend:hover {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .btn-attend.active {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .btn-maybe {
+            background: var(--text);
+            color: white;
+        }
+
+        .btn-maybe.active {
+            background: var(--secondary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 450px;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .close-btn:hover {
+            background: var(--bg);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal .btn-primary,
+        .modal .btn-secondary {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1rem;
+        }
+
+        .modal-link {
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .modal-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Login Page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg) 0%, #e0e7ff 100%);
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(67, 97, 238, 0.15);
+        }
+
+        .login-card h1 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* SVG Icons */
+        .icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        /* Error */
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <h1>Login</h1>
+                <button class="close-btn" style="visibility: hidden;">×</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="example@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••" required>
+                    <p id="loginError" class="error-msg hidden"></p>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <p class="modal-link" onclick="showSignup()">Need an account? Sign up</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Sign Up</h2>
+                <button class="close-btn" onclick="closeSignup()">×</button>
+            </div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="signupUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>UC Course</label>
+                    <input type="text" id="signupCourse" placeholder="e.g., CSE111, MATH101" required>
+                </div>
+                <div class="form-group">
+                    <label>Term</label>
+                    <select id="signupTerm" required>
+                        <option value="">Select Term</option>
+                        <option value="Fall2025">Fall 2025</option>
+                        <option value="Spring2025">Spring 2025</option>
+                        <option value="Summer2025">Summer 2025</option>
+                        <option value="Fall2024">Fall 2024</option>
+                        <option value="Spring2024">Spring 2024</option>
+                    </select>
+                </div>
+                <p id="signupError" class="error-msg hidden"></p>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+                <p class="modal-link" onclick="closeSignup()">Already have an account? Login</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="hidden">
+        <header class="header">
+            <h1>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M3 9h18M9 21V9"/>
+                </svg>
+                Post Boards
+            </h1>
+            <div class="header-right">
+                <span class="user-info">Welcome, <strong id="currentUser">user</strong></span>
+                <button class="btn btn-ghost" onclick="showProfile()">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    Settings
+                </button>
+                <button class="btn btn-ghost" onclick="logout()">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16,17 21,12 16,7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Boards List -->
+        <main id="boardsPage" class="main">
+            <div class="page-header">
+                <p class="page-title">Select a board or create a new one</p>
+                <button class="btn btn-primary" onclick="showCreateBoard()">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Create Board
+                </button>
+            </div>
+            <div id="boardsGrid" class="boards-grid"></div>
+        </main>
+
+        <!-- Board View -->
+        <main id="boardView" class="main hidden">
+            <div class="board-header">
+                <a class="back-btn" onclick="goToBoards()">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15,18 9,12 15,6"/>
+                    </svg>
+                    Back
+                </a>
+                <h2 id="boardTitle" class="board-title"></h2>
+                <p id="boardDescription" class="board-desc"></p>
+            </div>
+
+            <div class="page-header">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('posts')" id="postsTab">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Posts
+                    </button>
+                    <button class="tab" onclick="switchTab('events')" id="eventsTab">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Events
+                    </button>
+                </div>
+                <button class="btn btn-primary" id="createBtn" onclick="showCreatePost()">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Create Post
+                </button>
+            </div>
+
+            <div id="postsContainer" class="posts-container"></div>
+            <div id="eventsContainer" class="posts-container hidden"></div>
+        </main>
+    </div>
+
+    <!-- Create Board Modal -->
+    <div id="createBoardModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Create Board</h2>
+                <button class="close-btn" onclick="closeCreateBoard()">×</button>
+            </div>
+            <form id="createBoardForm">
+                <div class="form-group">
+                    <label>Board Name</label>
+                    <input type="text" id="boardName" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="boardDesc"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Board</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div id="createPostModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Create Post</h2>
+                <button class="close-btn" onclick="closeCreatePost()">×</button>
+            </div>
+            <form id="createPostForm">
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea id="postContent" placeholder="What's on your mind?" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Post</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Event Modal -->
+    <div id="createEventModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Create Event</h2>
+                <button class="close-btn" onclick="closeCreateEvent()">×</button>
+            </div>
+            <form id="createEventForm">
+                <div class="form-group">
+                    <label>Event Title</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="eventDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Event Type</label>
+                    <input type="text" id="eventType" placeholder="e.g., Meeting, Workshop, Social">
+                </div>
+                <div class="form-group">
+                    <label>Start Date & Time</label>
+                    <input type="datetime-local" id="eventStart" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date & Time (optional)</label>
+                    <input type="datetime-local" id="eventEnd">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="eventLocation" placeholder="Event location or link">
+                </div>
+                <button type="submit" class="btn btn-secondary">Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Settings Modal -->
+    <div id="profileModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Profile Settings</h2>
+                <button class="close-btn" onclick="closeProfile()">×</button>
+            </div>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="profileUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>UC Course</label>
+                    <input type="text" id="profileCourse" placeholder="e.g., CSE111, MATH101" required>
+                </div>
+                <div class="form-group">
+                    <label>Term</label>
+                    <select id="profileTerm" required>
+                        <option value="">Select Term</option>
+                        <option value="Fall2025">Fall 2025</option>
+                        <option value="Spring2025">Spring 2025</option>
+                        <option value="Summer2025">Summer 2025</option>
+                        <option value="Fall2024">Fall 2024</option>
+                        <option value="Spring2024">Spring 2024</option>
+                    </select>
+                </div>
+                <p id="profileError" class="error-msg hidden"></p>
+                <p id="profileSuccess" class="error-msg hidden" style="color: var(--success);"></p>
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // API Base URL - change this if backend runs on different port
+        const API_URL = '';  // Empty for same origin, or 'http://localhost:3000' if separate
+
+        // State
+        let currentUser = null;
+        let currentBoard = null;
+        let currentTab = 'posts';
+        let posts = [];
+        let events = [];
+
+        // ============ API HELPERS ============
+        
+        async function api(endpoint, options = {}) {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            return response.json();
+        }
+
+        // ============ AUTH ============
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+            
+            try {
+                const result = await api('/api/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (result.success) {
+                    currentUser = result.user;
+                    document.getElementById('currentUser').textContent = currentUser.username;
+                    document.getElementById('loginPage').classList.add('hidden');
+                    document.getElementById('appContainer').classList.remove('hidden');
+                    errorEl.classList.add('hidden');
+                    loadBoards();
+                } else {
+                    errorEl.textContent = result.message || 'Invalid credentials';
+                    errorEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorEl.textContent = 'Connection error. Is the server running?';
+                errorEl.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const course = document.getElementById('signupCourse').value;
+            const term = document.getElementById('signupTerm').value;
+            const errorEl = document.getElementById('signupError');
+            
+            try {
+                const result = await api('/api/signup', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, email, password, course, term })
+                });
+                
+                if (result.success) {
+                    currentUser = result.user;
+                    document.getElementById('currentUser').textContent = currentUser.username;
+                    document.getElementById('loginPage').classList.add('hidden');
+                    document.getElementById('appContainer').classList.remove('hidden');
+                    closeSignup();
+                    loadBoards();
+                } else {
+                    errorEl.textContent = result.message;
+                    errorEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorEl.textContent = 'Connection error';
+                errorEl.classList.remove('hidden');
+            }
+        });
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        function showSignup() {
+            document.getElementById('signupModal').classList.add('active');
+        }
+
+        function closeSignup() {
+            document.getElementById('signupModal').classList.remove('active');
+            document.getElementById('signupForm').reset();
+            document.getElementById('signupError').classList.add('hidden');
+        }
+
+        // ============ PROFILE ============
+
+        function showProfile() {
+            document.getElementById('profileModal').classList.add('active');
+            document.getElementById('profileUsername').value = currentUser.username || '';
+            document.getElementById('profileCourse').value = currentUser.course || '';
+            document.getElementById('profileTerm').value = currentUser.term || '';
+        }
+
+        function closeProfile() {
+            document.getElementById('profileModal').classList.remove('active');
+            document.getElementById('profileError').classList.add('hidden');
+            document.getElementById('profileSuccess').classList.add('hidden');
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('profileUsername').value;
+            const course = document.getElementById('profileCourse').value;
+            const term = document.getElementById('profileTerm').value;
+            const errorEl = document.getElementById('profileError');
+            const successEl = document.getElementById('profileSuccess');
+            
+            try {
+                const result = await api('/api/profile', {
+                    method: 'PUT',
+                    body: JSON.stringify({ 
+                        userId: currentUser.id, 
+                        username, 
+                        course, 
+                        term 
+                    })
+                });
+                
+                if (result.success) {
+                    currentUser.username = username;
+                    currentUser.course = course;
+                    currentUser.term = term;
+                    document.getElementById('currentUser').textContent = username;
+                    errorEl.classList.add('hidden');
+                    successEl.textContent = 'Profile updated successfully!';
+                    successEl.classList.remove('hidden');
+                    setTimeout(() => closeProfile(), 1500);
+                } else {
+                    successEl.classList.add('hidden');
+                    errorEl.textContent = result.message;
+                    errorEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorEl.textContent = 'Connection error';
+                errorEl.classList.remove('hidden');
+            }
+        });
+
+        // ============ BOARDS ============
+
+        async function loadBoards() {
+            const grid = document.getElementById('boardsGrid');
+            grid.innerHTML = '<div class="loading">Loading boards...</div>';
+            
+            try {
+                const boards = await api('/api/boards');
+                renderBoards(boards);
+            } catch (err) {
+                grid.innerHTML = '<div class="error-msg">Failed to load boards</div>';
+            }
+        }
+
+        function renderBoards(boards) {
+            const grid = document.getElementById('boardsGrid');
+            
+            if (boards.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <p>No boards yet. Create one to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = boards.map(board => `
+                <div class="board-card" onclick="openBoard(${board.id}, '${board.name}', '${board.description || ''}')">
+                    <h3>${board.name}</h3>
+                    <p>${board.description || 'No description'}</p>
+                    <div class="board-meta">
+                        <span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Posts
+                        </span>
+                        <span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            Events
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showCreateBoard() {
+            document.getElementById('createBoardModal').classList.add('active');
+        }
+
+        function closeCreateBoard() {
+            document.getElementById('createBoardModal').classList.remove('active');
+            document.getElementById('createBoardForm').reset();
+        }
+
+        document.getElementById('createBoardForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('boardName').value;
+            const description = document.getElementById('boardDesc').value;
+            
+            await api('/api/boards', {
+                method: 'POST',
+                body: JSON.stringify({ name, description })
+            });
+            
+            closeCreateBoard();
+            loadBoards();
+        });
+
+        async function openBoard(boardId, name, description) {
+            currentBoard = { id: boardId, name, description };
+            document.getElementById('boardTitle').textContent = name;
+            document.getElementById('boardDescription').textContent = description;
+            document.getElementById('boardsPage').classList.add('hidden');
+            document.getElementById('boardView').classList.remove('hidden');
+            switchTab('posts');
+        }
+
+        function goToBoards() {
+            currentBoard = null;
+            document.getElementById('boardView').classList.add('hidden');
+            document.getElementById('boardsPage').classList.remove('hidden');
+            loadBoards();
+        }
+
+        // ============ TABS ============
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('postsTab').classList.toggle('active', tab === 'posts');
+            document.getElementById('eventsTab').classList.toggle('active', tab === 'events');
+            document.getElementById('postsContainer').classList.toggle('hidden', tab !== 'posts');
+            document.getElementById('eventsContainer').classList.toggle('hidden', tab !== 'events');
+            
+            const createBtn = document.getElementById('createBtn');
+            if (tab === 'posts') {
+                createBtn.innerHTML = `
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Create Post
+                `;
+                createBtn.onclick = showCreatePost;
+                createBtn.className = 'btn btn-primary';
+                loadPosts();
+            } else {
+                createBtn.innerHTML = `
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Create Event
+                `;
+                createBtn.onclick = showCreateEvent;
+                createBtn.className = 'btn btn-secondary';
+                loadEvents();
+            }
+        }
+
+        // ============ POSTS ============
+
+        async function loadPosts() {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = '<div class="loading">Loading posts...</div>';
+            
+            try {
+                posts = await api(`/api/boards/${currentBoard.id}/posts`);
+                renderPosts();
+            } catch (err) {
+                container.innerHTML = '<div class="error-msg">Failed to load posts</div>';
+            }
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('postsContainer');
+            
+            if (posts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <p>No posts yet. Be the first to create one!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = posts.map(post => `
+                <div class="post-card">
+                    <div class="post-header">
+                        <div>
+                            <div class="post-author">${post.author}</div>
+                            <div class="post-time">${formatTime(post.timestamp)}</div>
+                        </div>
+                        ${post.userId === currentUser.id ? `
+                        <div class="post-actions">
+                            <button class="icon-btn" onclick="editPost(${post.id})">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" onclick="deletePost(${post.id})">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3,6 5,6 21,6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-footer">
+                        <div class="reactions">
+                            <button class="reaction-btn ${post.reactions?.like?.includes(currentUser.id) ? 'active' : ''}" 
+                                    onclick="toggleReaction(${post.id}, 'like')">
+                                👍 <span>${post.reactions?.like?.length || ''}</span>
+                            </button>
+                            <button class="reaction-btn ${post.reactions?.heart?.includes(currentUser.id) ? 'active' : ''}"
+                                    onclick="toggleReaction(${post.id}, 'heart')">
+                                ❤️ <span>${post.reactions?.heart?.length || ''}</span>
+                            </button>
+                            <button class="reaction-btn ${post.reactions?.smile?.includes(currentUser.id) ? 'active' : ''}"
+                                    onclick="toggleReaction(${post.id}, 'smile')">
+                                😊 <span>${post.reactions?.smile?.length || ''}</span>
+                            </button>
+                        </div>
+                        <div class="comment-count" onclick="toggleComments(${post.id})">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            ${post.comments?.length || 0}
+                        </div>
+                    </div>
+                    <div class="comments-section hidden" id="comments-${post.id}">
+                        ${(post.comments || []).map(c => `
+                            <div class="comment">
+                                <div class="comment-avatar">${c.author[0].toUpperCase()}</div>
+                                <div class="comment-body">
+                                    <div class="comment-author">${c.author}</div>
+                                    <div class="comment-text">${c.text}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="comment-input-wrapper">
+                            <input type="text" class="comment-input" placeholder="Write a comment..." 
+                                   onkeypress="handleCommentKey(event, ${post.id})">
+                            <button class="btn btn-primary" onclick="addComment(${post.id})">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"/>
+                                    <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showCreatePost() {
+            document.getElementById('createPostModal').classList.add('active');
+        }
+
+        function closeCreatePost() {
+            document.getElementById('createPostModal').classList.remove('active');
+            document.getElementById('createPostForm').reset();
+        }
+
+        document.getElementById('createPostForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = document.getElementById('postContent').value;
+            
+            const newPost = await api(`/api/boards/${currentBoard.id}/posts`, {
+                method: 'POST',
+                body: JSON.stringify({ content, userId: currentUser.id })
+            });
+            
+            posts.unshift(newPost);
+            closeCreatePost();
+            renderPosts();
+        });
+
+        async function deletePost(postId) {
+            if (confirm('Delete this post?')) {
+                await api(`/api/posts/${postId}`, { method: 'DELETE' });
+                posts = posts.filter(p => p.id !== postId);
+                renderPosts();
+            }
+        }
+
+        async function editPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            const newContent = prompt('Edit post:', post.content);
+            if (newContent !== null && newContent !== post.content) {
+                await api(`/api/posts/${postId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ content: newContent })
+                });
+                post.content = newContent;
+                renderPosts();
+            }
+        }
+
+        async function toggleReaction(postId, type) {
+            const reactions = await api(`/api/posts/${postId}/reactions`, {
+                method: 'POST',
+                body: JSON.stringify({ type, userId: currentUser.id })
+            });
+            
+            const post = posts.find(p => p.id === postId);
+            post.reactions = reactions;
+            renderPosts();
+        }
+
+        function toggleComments(postId) {
+            const section = document.getElementById(`comments-${postId}`);
+            section.classList.toggle('hidden');
+        }
+
+        function handleCommentKey(event, postId) {
+            if (event.key === 'Enter') {
+                addComment(postId);
+            }
+        }
+
+        async function addComment(postId) {
+            const input = document.querySelector(`#comments-${postId} .comment-input`);
+            const text = input.value.trim();
+            
+            if (text) {
+                const comment = await api(`/api/posts/${postId}/comments`, {
+                    method: 'POST',
+                    body: JSON.stringify({ text, userId: currentUser.id })
+                });
+                
+                const post = posts.find(p => p.id === postId);
+                if (!post.comments) post.comments = [];
+                post.comments.push(comment);
+                renderPosts();
+                
+                // Re-open comments section
+                setTimeout(() => {
+                    document.getElementById(`comments-${postId}`).classList.remove('hidden');
+                }, 0);
+            }
+        }
+
+        // ============ EVENTS ============
+
+        async function loadEvents() {
+            const container = document.getElementById('eventsContainer');
+            container.innerHTML = '<div class="loading">Loading events...</div>';
+            
+            try {
+                events = await api(`/api/boards/${currentBoard.id}/events`);
+                renderEvents();
+            } catch (err) {
+                container.innerHTML = '<div class="error-msg">Failed to load events</div>';
+            }
+        }
+
+        function renderEvents() {
+            const container = document.getElementById('eventsContainer');
+            
+            if (events.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <p>No events yet. Create one!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = events.map(event => `
+                <div class="event-card">
+                    <div>
+                        <span class="event-tag">${event.type || 'Event'}</span>
+                        <span class="event-time-tag">${formatTime(event.startDate)}</span>
+                    </div>
+                    <h3 class="event-title">${event.title}</h3>
+                    <p class="event-desc">${event.description}</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            ${formatDateTime(event.startDate)}
+                        </div>
+                        ${event.location ? `
+                        <div class="event-detail">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            ${event.location}
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="event-stats">
+                        <span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            ${event.going?.length || 0} going
+                        </span>
+                        <span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/>
+                            </svg>
+                            ${event.interested?.length || 0} interested
+                        </span>
+                    </div>
+                    <div class="event-footer">
+                        <div class="event-buttons">
+                            <button class="btn btn-attend ${event.going?.includes(currentUser.id) ? 'active' : ''}" 
+                                    onclick="toggleAttend(${event.id}, 'going')">
+                                Attend
+                            </button>
+                            <button class="btn btn-maybe ${event.interested?.includes(currentUser.id) ? 'active' : ''}"
+                                    onclick="toggleAttend(${event.id}, 'interested')">
+                                Maybe
+                            </button>
+                        </div>
+                        <div class="comment-count" onclick="toggleEventComments(${event.id})">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            ${event.comments?.length || 0}
+                        </div>
+                    </div>
+                    <div class="comments-section hidden" id="event-comments-${event.id}">
+                        ${(event.comments || []).map(c => `
+                            <div class="comment">
+                                <div class="comment-avatar">${c.author[0].toUpperCase()}</div>
+                                <div class="comment-body">
+                                    <div class="comment-author">${c.author}</div>
+                                    <div class="comment-text">${c.text}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="comment-input-wrapper">
+                            <input type="text" class="comment-input" placeholder="Write a comment..." 
+                                   onkeypress="handleEventCommentKey(event, ${event.id})">
+                            <button class="btn btn-secondary" onclick="addEventComment(${event.id})">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"/>
+                                    <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showCreateEvent() {
+            document.getElementById('createEventModal').classList.add('active');
+        }
+
+        function closeCreateEvent() {
+            document.getElementById('createEventModal').classList.remove('active');
+            document.getElementById('createEventForm').reset();
+        }
+
+        document.getElementById('createEventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const newEvent = await api(`/api/boards/${currentBoard.id}/events`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: document.getElementById('eventTitle').value,
+                    description: document.getElementById('eventDescription').value,
+                    type: document.getElementById('eventType').value || 'Event',
+                    startDate: document.getElementById('eventStart').value,
+                    endDate: document.getElementById('eventEnd').value,
+                    location: document.getElementById('eventLocation').value,
+                    userId: currentUser.id
+                })
+            });
+            
+            events.unshift(newEvent);
+            closeCreateEvent();
+            renderEvents();
+        });
+
+        async function toggleAttend(eventId, type) {
+            const result = await api(`/api/events/${eventId}/attend`, {
+                method: 'POST',
+                body: JSON.stringify({ type, userId: currentUser.id })
+            });
+            
+            const event = events.find(e => e.id === eventId);
+            event.going = result.going;
+            event.interested = result.interested;
+            renderEvents();
+        }
+
+        function toggleEventComments(eventId) {
+            const section = document.getElementById(`event-comments-${eventId}`);
+            section.classList.toggle('hidden');
+        }
+
+        function handleEventCommentKey(e, eventId) {
+            if (e.key === 'Enter') {
+                addEventComment(eventId);
+            }
+        }
+
+        async function addEventComment(eventId) {
+            const input = document.querySelector(`#event-comments-${eventId} .comment-input`);
+            const text = input.value.trim();
+            
+            if (text) {
+                const comment = await api(`/api/posts/${eventId}/comments`, {
+                    method: 'POST',
+                    body: JSON.stringify({ text, userId: currentUser.id })
+                });
+                
+                const event = events.find(e => e.id === eventId);
+                if (!event.comments) event.comments = [];
+                event.comments.push(comment);
+                renderEvents();
+                
+                setTimeout(() => {
+                    document.getElementById(`event-comments-${eventId}`).classList.remove('hidden');
+                }, 0);
+            }
+        }
+
+        // ============ UTILITIES ============
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        function formatDateTime(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            return date.toLocaleString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+    </script>
+</body>
+</html>
